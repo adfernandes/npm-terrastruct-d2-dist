@@ -1,0 +1,15 @@
+{
+  "name": "terrastruct-d2-bin-darwin-x64",
+  "version": "0.7.1",
+  "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adfernandes/npm-terrastruct-d2-dist.git"
+  },
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "x64"
+  ]
+}

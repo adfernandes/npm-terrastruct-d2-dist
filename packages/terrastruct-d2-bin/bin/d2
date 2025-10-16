@@ -1,0 +1,64 @@
+#!/usr/bin/env node
+
+const childProcess = require("child_process");
+const path = require("path");
+
+const D2_PACKAGES = {
+  darwin: { arm64: "terrastruct-d2-bin-darwin-arm64", x64: "terrastruct-d2-bin-darwin-x64" },
+  linux: { arm64: "terrastruct-d2-bin-linux-arm64", x64: "terrastruct-d2-bin-linux-x64" },
+  win32: { arm64: "terrastruct-d2-bin-win32-arm64", x64: "terrastruct-d2-bin-win32-x64" }
+};
+
+const TALA_PACKAGES = {
+  darwin: { arm64: "terrastruct-d2plugin-tala-bin-darwin-arm64", x64: "terrastruct-d2plugin-tala-bin-darwin-x64" },
+  linux: { arm64: "terrastruct-d2plugin-tala-bin-linux-arm64", x64: "terrastruct-d2plugin-tala-bin-linux-x64" },
+  win32: { arm64: "terrastruct-d2plugin-tala-bin-win32-arm64", x64: "terrastruct-d2plugin-tala-bin-win32-x64" }
+};
+
+const d2Package = D2_PACKAGES[process.platform][process.arch];
+const talaPackage = TALA_PACKAGES[process.platform][process.arch];
+
+const d2Binary = process.platform === "win32" ? "d2.exe" : "d2";
+const talaBinary = process.platform === "win32" ? "d2tala-plugin.exe" : "d2tala-plugin";
+
+const node_modules = path.resolve(module.path, "..", "..");
+
+function getD2Executable() {
+  const package = `${node_modules}${path.sep}${d2Package}${path.sep}package.json`;
+  const { version } = require(package);
+  const directory = path.dirname(require.resolve(package));
+  const executable = `${directory}${path.sep}d2-v${version}${path.sep}bin${path.sep}${d2Binary}`;
+  try {
+    return require.resolve(executable);
+  } catch (error) {
+    throw new Error(`error: ${executable} is not installed`);
+  }
+}
+
+function getTalaDirectory() {
+  try {
+    const package = `${node_modules}${path.sep}${talaPackage}${path.sep}package.json`;
+    const { version } = require(package);
+    const directory = path.dirname(require.resolve(package));
+    return `${directory}${path.sep}tala-v${version}${path.sep}bin`;
+  } catch (error) {
+    return null;
+  }
+}
+
+function prependTalaToPath() {
+  const directory = getTalaDirectory();
+  if (directory) {
+    process.env.PATH = `${directory}${path.delimiter}${process.env.PATH}`;
+  }
+}
+
+prependTalaToPath();
+
+try {
+  const executable = getD2Executable();
+  childProcess.execFileSync(executable, process.argv.slice(2), { stdio: "inherit" });
+  process.exit(0);
+} catch (error) {
+  process.exit(error.status || 1);
+}

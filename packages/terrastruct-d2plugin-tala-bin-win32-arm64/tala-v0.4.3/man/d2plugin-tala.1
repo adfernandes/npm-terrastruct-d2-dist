@@ -1,0 +1,67 @@
+.Dd $Mdocdate$
+.Dt d2plugin-tala 1
+.Os
+.Sh NAME
+.Nm d2plugin-tala
+.Nd plugs into
+.Xr d2 1
+to layout diagrams via TALA
+.Sh SYNOPSIS
+.Nm d2plugin-tala
+.Op Fl --version
+.Sh DESCRIPTION
+.Nm
+plugs into
+.Xr d2 1
+to layout diagrams via TALA. TALA is a diagram layout engine designed
+specifically for software architecture diagrams, though it works well in other
+domains too. It stands for Terrastruct's Auto-Layout Approach.
+.Pp
+TALA is free to try and evaluate, but requires an API token to use without
+watermark. You can get an API token through your Terrastruct account, or
+purchase a standalone one at https://d2lang.com/buy-tala.
+.Pp
+You can set the API token as environment variable
+.Ev $TSTRUCT_TOKEN
+.Ns , or in the config authfile at
+.Pa ~/.config/tstruct/auth.json
+under the field api_token.
+.Pp
+The advantage to using
+.Pa ~/.config/tstruct/auth.json
+over
+.Ev $TSTRUCT_TOKEN
+is that
+.Nm
+will automatically update the api_token stored in the config authfile as your subscription
+renews.
+.Pp
+It does this by making a ping to Terrastruct's servers when your subscription is set to
+renew. For example, if you purchased a monthly subscription on January 1,
+.Nm
+will make a ping to Terrastruct servers when it's next run after February 1. The new
+renewal date will be written to your local authfile. The only data sent in this ping is
+the API token, and you can use TALA completely offline before the expiration.
+.Pp
+After 12 months of subscription, your copy of TALA is valid forever.
+.Pp
+We do give a grace period of 30 days in case of payment issues where only a warning
+is displayed. After the 30 days,
+.Nm
+reverts to evaluation mode.
+.Pp
+For further docs see:
+.Bl -dash
+.It
+.Lk https://github.com/terrastruct/TALA
+.It
+.Lk https://terrastruct.com/tala
+.El
+.Pp
+Check out
+.Lk https://text-to-diagram.com
+for a comprehensive comparison against other layout engines and diagramming technologies.
+.Sh SEE ALSO
+.Xr d2 1
+.Sh AUTHORS
+Terrastruct Inc.
